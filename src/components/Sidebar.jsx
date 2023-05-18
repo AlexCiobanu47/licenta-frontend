@@ -3,7 +3,7 @@ import { MdOutlineSensors } from "react-icons/md";
 import { Link } from "react-router-dom";
 const Sidebar = () => {
   return (
-    <div id="sidebar" className="flex flex-col">
+    <div id="sidebar" className="flex flex-col bg-white">
       <h1>Room monitoring</h1>
       <Link to="/" className="flex items-center m-2">
         <AiOutlineHome size={20} />
