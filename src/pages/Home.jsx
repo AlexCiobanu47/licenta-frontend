@@ -3,6 +3,7 @@ import Chart from "../components/Chart";
 import Current from "../components/Current";
 import Reading from "../components/Reading";
 const Home = () => {
+  //current
   const [currentTemp, setCurrentTemp] = useState(0);
   const [currentHum, setCurrentHum] = useState(0);
   const [currentLight, setCurrentLight] = useState(0);
@@ -33,12 +34,42 @@ const Home = () => {
     const json = await response.json();
     setCurrentMotion(json[0].motion);
   };
+  //averages
+  const [todayData, setTodayData] = useState([]);
+  const [weekData, setWeekData] = useState([]);
+  const [monthData, setMonthData] = useState([]);
+  const [todayTemp, setTodayTemp] = useState(0);
+  const [todayHum, setTodayHum] = useState(0);
+
+  const fetchTodayData = async () => {
+    var avgTemp = 0;
+    var avgHum = 0;
+    //temp
+    const tempResponse = await fetch("/api/temp");
+    const temp = await tempResponse.json();
+    temp.forEach((item) => {
+      if (item.temperature != "nan") avgTemp += parseFloat(item.temperature);
+    });
+    avgTemp /= temp.length;
+    setTodayTemp(avgTemp.toPrecision(3));
+    //humidity
+    const humResponse = await fetch("/api/hum");
+    const hum = await humResponse.json();
+    hum.forEach((item) => {
+      if (item.humidity != "nan") avgHum += parseFloat(item.humidity);
+    });
+    avgHum /= hum.length;
+    setTodayHum(avgHum.toPrecision(3));
+  };
+
   useEffect(() => {
     fetchLatestTemp();
     fetchLatestHum();
     fetchLatestLight();
     fetchLatestGas();
     fetchLatestMotion();
+    //average
+    fetchTodayData();
   }, []);
   return (
     <main className="grid grid-cols-5 bg-background rounded-3xl">
@@ -58,8 +89,8 @@ const Home = () => {
         <h1 className="col-span-3 m-4 text-2xl">Average readings</h1>
         <Reading
           title={"Today"}
-          temp={"20"}
-          hum={"44"}
+          temp={todayTemp}
+          hum={todayHum}
           divStyle="rounded-2xl p-4 grid grid-cols-4 bg-background"
           h1Style="text-lg font-bold"
           tempUp={false}
