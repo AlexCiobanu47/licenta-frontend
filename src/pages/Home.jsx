@@ -13,22 +13,31 @@ const Home = () => {
       <div className="home-readings grid grid-cols-3 col-span-5 gap-2 m-5 rounded-3xl p-4 bg-readings">
         <h1 className="col-span-3 m-4 text-2xl">Average readings</h1>
         <Reading
-          reading={"Today's averages"}
-          title={"20 \u00B0 C | 44%"}
-          divStyle="border border-black rounded-2xl p-4 flex flex-col justify-center items-center"
+          title={"Today"}
+          temp={"20"}
+          hum={"44"}
+          divStyle="rounded-2xl p-4 grid grid-cols-4 bg-background"
           h1Style="text-lg font-bold"
+          tempUp={false}
+          humUp={false}
         />
         <Reading
-          reading={"This week's averages"}
-          title={"20 \u00B0 C | 44%"}
-          divStyle="border border-black rounded-2xl p-4 flex flex-col justify-center items-center"
+          title={"This week"}
+          temp={"24"}
+          hum={"50"}
+          divStyle=" rounded-2xl p-4 grid grid-cols-4 bg-background"
           h1Style="text-lg font-bold"
+          tempUp={true}
+          humUp={false}
         />
         <Reading
-          reading={"This month's averages"}
-          title={"20 \u00B0 C | 44%"}
-          divStyle="border border-black rounded-2xl p-4 flex flex-col justify-center items-center"
+          title={"This month"}
+          temp={"23"}
+          hum={"60"}
+          divStyle="rounded-2xl p-4 grid grid-cols-4 bg-background"
           h1Style="text-lg font-bold"
+          tempUp={true}
+          humUp={true}
         />
       </div>
     </main>
