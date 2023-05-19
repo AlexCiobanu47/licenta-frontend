@@ -1,11 +1,55 @@
+import { useEffect, useState } from "react";
 import Chart from "../components/Chart";
 import Current from "../components/Current";
 import Reading from "../components/Reading";
 const Home = () => {
+  const [currentTemp, setCurrentTemp] = useState(0);
+  const [currentHum, setCurrentHum] = useState(0);
+  const [currentLight, setCurrentLight] = useState(0);
+  const [currentGas, setCurrentGas] = useState(0);
+  const [currentMotion, setCurrentMotion] = useState(0);
+  const fetchLatestTemp = async () => {
+    const response = await fetch("/api/temp/latest");
+    const json = await response.json();
+    setCurrentTemp(json[0].temperature);
+  };
+  const fetchLatestHum = async () => {
+    const response = await fetch("/api/hum/latest");
+    const json = await response.json();
+    setCurrentHum(json[0].humidity);
+  };
+  const fetchLatestLight = async () => {
+    const response = await fetch("/api/light/latest");
+    const json = await response.json();
+    setCurrentLight(json[0].light);
+  };
+  const fetchLatestGas = async () => {
+    const response = await fetch("/api/gas/latest");
+    const json = await response.json();
+    setCurrentGas(json[0].gasConcentration);
+  };
+  const fetchLatestMotion = async () => {
+    const response = await fetch("/api/motion/latest");
+    const json = await response.json();
+    setCurrentMotion(json[0].motion);
+  };
+  useEffect(() => {
+    fetchLatestTemp();
+    fetchLatestHum();
+    fetchLatestLight();
+    fetchLatestGas();
+    fetchLatestMotion();
+  }, []);
   return (
     <main className="grid grid-cols-5 bg-background rounded-3xl">
       <div className="col-span-2 flex">
-        <Current />
+        <Current
+          temp={currentTemp}
+          hum={currentHum}
+          light={currentLight}
+          gas={currentGas}
+          motion={currentMotion}
+        />
       </div>
       <div className="col-span-3 flex">
         <Chart />

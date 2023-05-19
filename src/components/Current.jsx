@@ -1,5 +1,10 @@
 import { AiOutlineCheckCircle } from "react-icons/ai";
-const Performance = () => {
+const Current = ({ temp, hum, light, gas, motion }) => {
+  const tempString = `${temp}\u00B0C`;
+  const humString = `${hum}%`;
+  const lightString = light ? "ON" : "OFF";
+  const gasString = gas;
+  const motionString = motion ? "DETECTED" : "NOT DETECTED";
   return (
     <div
       id="performance-wrapper"
@@ -9,11 +14,11 @@ const Performance = () => {
         <h1 className="col-span-4 ml-4 mb-4 text-2xl">Current</h1>
         <div className="col-span-4 flex justify-center mb-4">
           <div className="pr-6 border-r-2 flex flex-col justify-center items-center">
-            <h1 className="text-2xl">20&#176;</h1>
+            <h1 className="text-2xl">{tempString}</h1>
             <p className="text-xs">Temperature</p>
           </div>
           <div className="pl-6 flex flex-col justify-center items-center">
-            <h1 className="text-2xl">44%</h1>
+            <h1 className="text-2xl">{humString}</h1>
             <p className="text-xs">Humidity</p>
           </div>
         </div>
@@ -22,19 +27,20 @@ const Performance = () => {
         <div className="flex items-center mt-4">
           <AiOutlineCheckCircle size={40} />
           <span className="ml-1">
-            <strong>Light </strong>is ON
+            <strong>Light </strong>is {lightString}
           </span>
         </div>
         <div className="flex items-center mt-4">
           <AiOutlineCheckCircle size={40} />
           <span className="ml-1">
-            <strong>Motion</strong> was detected
+            <strong>Motion </strong>
+            {motionString}
           </span>
         </div>
         <div className="flex items-center mt-4">
           <AiOutlineCheckCircle size={40} />
           <span className="ml-1">
-            <strong>Gas leak </strong> was detected
+            <strong>Gas concentration </strong> {gasString}
           </span>
         </div>
       </div>
@@ -42,4 +48,4 @@ const Performance = () => {
   );
 };
 
-export default Performance;
+export default Current;
