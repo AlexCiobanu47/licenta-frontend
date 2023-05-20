@@ -1,10 +1,62 @@
-import { isThisMonth, isThisWeek, isToday } from "date-fns";
+import { format, getISODay, isThisMonth, isThisWeek, isToday } from "date-fns";
 import parseISO from "date-fns/parseISO";
 import { useEffect, useState } from "react";
 import Chart from "../components/Chart";
 import Current from "../components/Current";
 import Reading from "../components/Reading";
 const Home = () => {
+  //chart
+  const [data, setData] = useState([]);
+  const [chart, setChart] = useState(3);
+  const [isTemp, setIsTemp] = useState(true);
+  const [isHum, setIsHum] = useState(false);
+  const tempButton = document.getElementById("tempButton");
+  const humButton = document.getElementById("humButton");
+  const handleDaySelect = () => {
+    setChart(1);
+    if (isTemp) setData(todayTemp);
+    if (isHum) setData(todayHum);
+  };
+  const handleWeekSelect = () => {
+    setChart(2);
+    if (isTemp) setData(weekTemp);
+    if (isHum) setData(weekHum);
+  };
+  const handleMonthSelect = () => {
+    setChart(3);
+    if (isTemp) setData(monthTemp);
+    if (isHum) setData(monthHum);
+  };
+  const handleTempClick = () => {
+    //fetch temperatures
+    setIsTemp(true);
+    setIsHum(false);
+    tempButton.classList.add("text-red-600");
+    humButton.classList.remove("text-red-600");
+    // data.forEach((item) => {
+    //   switch (chart) {
+    //     case 1:
+    //       item.createdAt = format(new Date(item.createdAt), "hh:mm");
+    //       break;
+    //     case 2:
+    //       item.createdAt = format(new Date(item.createdAt), "EEEE");
+    //       break;
+    //     case 3:
+    //       item.createdAt = format(new Date(item.createdAt), "dd/MM");
+    //       break;
+    //     default:
+    //       break;
+    //   }
+    // });
+  };
+  const handlehumidityClick = () => {
+    //fetch humidities
+    setIsTemp(false);
+    setIsHum(true);
+    tempButton.classList.remove("text-red-600");
+    humButton.classList.add("text-red-600");
+    setData(todayHum);
+  };
   //current
   const [currentTemp, setCurrentTemp] = useState(0);
   const [currentHum, setCurrentHum] = useState(0);
@@ -98,34 +150,46 @@ const Home = () => {
     //fetch
     const fetchData = async () => {
       //temp
+      setTodayTemp([]);
+      setWeekTemp([]);
+      setMonthTemp([]);
       const tempResponse = await fetch("/api/temp");
       const temp = await tempResponse.json();
       temp.forEach((item) => {
         if (item.temperature != "nan") {
           if (isToday(parseISO(item.createdAt))) {
-            setTodayTemp((todayTemp) => [...todayTemp, item]);
+            setTodayTemp((todayTemp) => [item, ...todayTemp]);
+            // item.createdAt = format(new Date(item.createdAt), "hh:mm");
           }
           if (isThisWeek(parseISO(item.createdAt))) {
-            setWeekTemp((weekTemp) => [...weekTemp, item]);
+            setWeekTemp((weekTemp) => [item, ...weekTemp]);
+            //item.createdAt = getISODay(new Date(item.createdAt));
           }
           if (isThisMonth(parseISO(item.createdAt))) {
-            setMonthTemp((monthTemp) => [...monthTemp, item]);
+            setMonthTemp((monthTemp) => [item, ...monthTemp]);
+            // item.createdAt = format(new Date(item.createdAt), "dd/MM");
           }
         }
       });
       //hum
+      setTodayHum([]);
+      setWeekHum([]);
+      setMonthHum([]);
       const humResponse = await fetch("/api/hum");
       const hum = await humResponse.json();
       hum.forEach((item) => {
         if (item.humidity != "nan") {
           if (isToday(parseISO(item.createdAt))) {
-            setTodayHum((todayHum) => [...todayHum, item]);
+            setTodayHum((todayHum) => [item, ...todayHum]);
+            // item.createdAt = format(new Date(item.createdAt), "hh:mm");
           }
           if (isThisWeek(parseISO(item.createdAt))) {
-            setWeekHum((weekHum) => [...weekHum, item]);
+            setWeekHum((weekHum) => [item, ...weekHum]);
+            // item.createdAt = getISODay(new Date(item.createdAt));
           }
           if (isThisMonth(parseISO(item.createdAt))) {
-            setMonthHum((monthHum) => [...monthHum, item]);
+            setMonthHum((monthHum) => [item, ...monthHum]);
+            // item.createdAt = format(new Date(item.createdAt), "dd/MM");
           }
         }
       });
@@ -151,7 +215,16 @@ const Home = () => {
         />
       </div>
       <div className="col-span-3 flex">
-        <Chart />
+        <Chart
+          data={data}
+          selectTemp={handleTempClick}
+          isTemp={isTemp}
+          selectHum={handlehumidityClick}
+          isHum={isHum}
+          handleDayClick={handleDaySelect}
+          handleWeekClick={handleWeekSelect}
+          handleMonthClick={handleMonthSelect}
+        />
       </div>
       <div className="home-readings grid grid-cols-3 col-span-5 gap-2 m-5 rounded-3xl p-4 bg-readings">
         <h1 className="col-span-3 m-4 text-2xl">Average readings</h1>

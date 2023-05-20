@@ -1,5 +1,3 @@
-import format from "date-fns/format";
-import { useState } from "react";
 import {
   CartesianGrid,
   Legend,
@@ -9,51 +7,23 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-const Chart = () => {
-  const [data, setData] = useState([]);
-  const [isTemp, setIsTemp] = useState(true);
-  const [isHum, setIsHum] = useState(false);
-  const tempButton = document.getElementById("tempButton");
-  const humButton = document.getElementById("humButton");
-  const handleTempClick = () => {
-    //fetch temperatures
-    setIsTemp(true);
-    setIsHum(false);
-    tempButton.classList.add("text-red-600");
-    humButton.classList.remove("text-red-600");
-    fetchTemp();
-  };
-  const handlehumidityClick = () => {
-    //fetch humidities
-    setIsTemp(false);
-    setIsHum(true);
-    tempButton.classList.remove("text-red-600");
-    humButton.classList.add("text-red-600");
-    fetchHum();
-  };
-  const fetchTemp = async () => {
-    const response = await fetch("/api/temp");
-    const temp = await response.json();
-    temp.forEach((item) => {
-      item.createdAt = format(new Date(item.createdAt), "MM/dd/yyyy hh:mm");
-    });
-    setData(temp);
-  };
-  const fetchHum = async () => {
-    const response = await fetch("/api/hum");
-    const hum = await response.json();
-    hum.forEach((item) => {
-      item.createdAt = format(new Date(item.createdAt), "MM/dd/yyyy hh:mm");
-    });
-    setData(hum);
-  };
+const Chart = ({
+  data,
+  selectTemp,
+  isTemp,
+  selectHum,
+  isHum,
+  handleDayClick,
+  handleWeekClick,
+  handleMonthClick,
+}) => {
   return (
     <div className="m-4 p-4 rounded-3xl bg-chart flex-1">
-      <div className="buttons flex items-center">
+      <div className="buttons flex items-center justify-between">
         <button
           id="tempButton"
           className="mx-2 border-b-2 border-transparent text-2xl hover:border-b-3 hover:border-red-600 focus:border-transparent"
-          onClick={handleTempClick}
+          onClick={selectTemp}
         >
           Temperature
         </button>
@@ -61,10 +31,13 @@ const Chart = () => {
         <button
           id="humButton"
           className="mx-2 border-b-2 border-transparent text-2xl hover:border-b-3 hover:border-red-600 focus:border-transparent"
-          onClick={handlehumidityClick}
+          onClick={selectHum}
         >
           Humidity
         </button>
+        <button onClick={handleDayClick}>Day</button>
+        <button onClick={handleWeekClick}>Week</button>
+        <button onClick={handleMonthClick}>Month</button>
       </div>
       <LineChart
         width={500}
