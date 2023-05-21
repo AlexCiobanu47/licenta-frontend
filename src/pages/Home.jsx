@@ -11,6 +11,19 @@ const Home = () => {
   const [currentGas, setCurrentGas] = useState(0);
   const [currentLight, setCurrentLight] = useState(0);
   const [currentMotion, setCurrentMotion] = useState(0);
+  //average
+  const [dayTemp, setDayTemp] = useState([]);
+  const [dayTempAverage, setDayTempAverage] = useState(0);
+  const [dayHum, setDayHum] = useState([]);
+  const [dayHumAverage, setDayHumAverage] = useState(0);
+  const [weekTemp, setWeekTemp] = useState([]);
+  const [weekTempAverage, setWeekTempAverage] = useState(0);
+  const [weekHum, setWeekHum] = useState([]);
+  const [weekHumAverage, setWeekHumAverage] = useState(0);
+  const [monthTemp, setMonthTemp] = useState([]);
+  const [monthTempAverage, setMonthTempAverage] = useState(0);
+  const [monthHum, setMonthHum] = useState([]);
+  const [monthHumAverage, setMonthHumAverage] = useState(0);
 
   //chart
   const [data, setData] = useState([]);
@@ -65,6 +78,7 @@ const Home = () => {
           if (isToday(new Date(item.createdAt)) && chartInterval == "day") {
             item.createdAt = format(new Date(item.createdAt), "hh:mm");
             setData((data) => [item, ...data]);
+            setDayTemp((dayTemp) => [item, ...dayTemp]);
           }
           if (
             isThisWeek(new Date(item.createdAt), { weekStartsOn: 1 }) &&
@@ -72,6 +86,7 @@ const Home = () => {
           ) {
             item.createdAt = format(new Date(item.createdAt), "EEEE");
             setData((data) => [item, ...data]);
+            setWeekTemp((weekTemp) => [item, ...weekTemp]);
           }
           if (
             isThisMonth(new Date(item.createdAt)) &&
@@ -79,6 +94,7 @@ const Home = () => {
           ) {
             item.createdAt = format(new Date(item.createdAt), "dd/MM");
             setData((data) => [item, ...data]);
+            setMonthTemp((monthTemp) => [item, ...monthTemp]);
           }
         });
       }
@@ -90,6 +106,7 @@ const Home = () => {
           if (isToday(new Date(item.createdAt)) && chartInterval == "day") {
             item.createdAt = format(new Date(item.createdAt), "hh:mm");
             setData((data) => [item, ...data]);
+            setDayHum((dayHum) => [item, ...dayHum]);
           }
           if (
             isThisWeek(new Date(item.createdAt), { weekStartsOn: 1 }) &&
@@ -97,6 +114,7 @@ const Home = () => {
           ) {
             item.createdAt = format(new Date(item.createdAt), "EEEE");
             setData((data) => [item, ...data]);
+            setWeekHum((weekHum) => [item, ...weekHum]);
           }
           if (
             isThisMonth(new Date(item.createdAt)) &&
@@ -104,9 +122,63 @@ const Home = () => {
           ) {
             item.createdAt = format(new Date(item.createdAt), "dd/MM");
             setData((data) => [item, ...data]);
+            setMonthHum((monthHum) => [item, ...monthHum]);
           }
         });
       }
+      //calculate averages
+      //day
+      var dayTempAvg = 0;
+      dayTemp.forEach((item) => {
+        if (item.temperature != "nan") {
+          dayTempAvg += parseFloat(item.temperature);
+        }
+      });
+      dayTempAvg /= dayTemp.length;
+      setDayTempAverage(dayTempAvg.toPrecision(4));
+      var dayHumAvg = 0;
+      dayHum.forEach((item) => {
+        if (item.humidity != "nan") {
+          dayHumAvg += parseFloat(item.humidity);
+        }
+      });
+      dayHumAvg /= dayHum.length;
+      setDayHumAverage(dayHumAvg.toPrecision(4));
+      //week
+      var weekTempAvg = 0;
+      weekTemp.forEach((item) => {
+        if (item.temperature != "nan") {
+          weekTempAvg += parseFloat(item.temperature);
+        }
+      });
+      weekTempAvg /= weekTemp.length;
+      setWeekTempAverage(weekTempAvg.toPrecision(4));
+      var weekHumAvg = 0;
+      weekHum.forEach((item) => {
+        if (item.humidity != "nan") {
+          weekHumAvg += parseFloat(item.humidity);
+        }
+      });
+      weekHumAvg /= weekHum.length;
+      setWeekHumAverage(weekHumAvg.toPrecision(4));
+      //month
+      var monthTempAvg = 0;
+      monthTemp.forEach((item) => {
+        if (item.temperature != "nan") {
+          monthTempAvg += parseFloat(item.temperature);
+        }
+      });
+      monthTempAvg /= monthTemp.length;
+      setMonthTempAverage(monthTempAvg.toPrecision(4));
+      var monthHumAvg = 0;
+      monthHum.forEach((item) => {
+        if (item.humidity != "nan") {
+          monthHumAvg += parseFloat(item.humidity);
+        }
+      });
+      monthHumAvg /= monthHum.length;
+      setMonthHumAverage(monthHumAvg.toPrecision(4));
+      //current
       const tempResponse = await fetch("/api/temp/latest");
       const jsonTempResponse = await tempResponse.json();
       setCurrentTemp(jsonTempResponse[0].temperature);
@@ -153,17 +225,17 @@ const Home = () => {
         <h1 className="col-span-3 m-4 text-2xl">Average readings</h1>
         <Reading
           title={"Today"}
-          // temp={todayAverageTemp}
-          // hum={todayAverageHum}
+          temp={dayTempAverage}
+          hum={dayHumAverage}
           divStyle="rounded-2xl p-4 grid grid-cols-4 bg-background"
           h1Style="text-lg font-bold"
-          // tempUp={currentTemp > todayAverageTemp ? false : true}
-          // humUp={currentHum > todayAverageHum ? false : true}
+          tempUp={currentTemp > dayTempAverage ? false : true}
+          humUp={currentHum > dayHumAverage ? false : true}
         />
         <Reading
           title={"This week"}
-          // temp={weekAverageTemp}
-          // hum={weekAverageHum}
+          temp={weekTempAverage}
+          hum={weekHumAverage}
           divStyle=" rounded-2xl p-4 grid grid-cols-4 bg-background"
           h1Style="text-lg font-bold"
           // tempUp={currentTemp > weekAverageTemp ? false : true}
@@ -171,12 +243,12 @@ const Home = () => {
         />
         <Reading
           title={"This month"}
-          // temp={monthAverageTemp}
-          // hum={monthAverageHum}
+          temp={monthTempAverage}
+          hum={monthHumAverage}
           divStyle="rounded-2xl p-4 grid grid-cols-4 bg-background"
           h1Style="text-lg font-bold"
-          // tempUp={currentTemp > monthAverageTemp ? false : true}
-          // humUp={currentHum > monthAverageHum ? false : true}
+          tempUp={currentTemp > monthTempAverage ? false : true}
+          humUp={currentHum > monthHumAverage ? false : true}
         />
       </div>
     </main>
