@@ -68,6 +68,45 @@ const Home = () => {
     humButton.classList.add("text-red-600");
   };
   useEffect(() => {
+    const fetchInitialData = async () => {
+      //temp
+      const tempResponseData = await fetch("/api/temp");
+      const tempData = await tempResponseData.json();
+      tempData.forEach((item) => {
+        if (isToday(new Date(item.createdAt))) {
+          item.createdAt = format(new Date(item.createdAt), "hh:mm");
+          setDayTemp((dayTemp) => [item, ...dayTemp]);
+        }
+        if (isThisWeek(new Date(item.createdAt), { weekStartsOn: 1 })) {
+          item.createdAt = format(new Date(item.createdAt), "EEEE");
+          setWeekTemp((weekTemp) => [item, ...weekTemp]);
+        }
+        if (isThisMonth(new Date(item.createdAt))) {
+          item.createdAt = format(new Date(item.createdAt), "dd/MM");
+          setMonthTemp((monthTemp) => [item, ...monthTemp]);
+        }
+      });
+      //hum
+      const humResponseData = await fetch("/api/hum");
+      const humData = await humResponseData.json();
+      humData.forEach((item) => {
+        if (isToday(new Date(item.createdAt))) {
+          item.createdAt = format(new Date(item.createdAt), "hh:mm");
+          setDayHum((dayTemp) => [item, ...dayTemp]);
+        }
+        if (isThisWeek(new Date(item.createdAt), { weekStartsOn: 1 })) {
+          item.createdAt = format(new Date(item.createdAt), "EEEE");
+          setWeekHum((weekTemp) => [item, ...weekTemp]);
+        }
+        if (isThisMonth(new Date(item.createdAt))) {
+          item.createdAt = format(new Date(item.createdAt), "dd/MM");
+          setMonthHum((monthTemp) => [item, ...monthTemp]);
+        }
+      });
+    };
+    fetchInitialData();
+  }, []);
+  useEffect(() => {
     const fetchData = async () => {
       setData([]);
       if (isTemp) {
