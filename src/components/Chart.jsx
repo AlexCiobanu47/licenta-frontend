@@ -35,9 +35,15 @@ const Chart = ({
         >
           Humidity
         </button>
-        <button onClick={handleDayClick}>Day</button>
-        <button onClick={handleWeekClick}>Week</button>
-        <button onClick={handleMonthClick}>Month</button>
+        <button onClick={handleDayClick} id="dayButton">
+          Day
+        </button>
+        <button onClick={handleWeekClick} id="weekButton">
+          Week
+        </button>
+        <button onClick={handleMonthClick} id="monthButton">
+          Month
+        </button>
       </div>
       <LineChart
         width={500}
